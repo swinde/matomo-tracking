@@ -61,10 +61,29 @@ function bootMatomo(element) {
         scriptRequested = true;
     }
 
+
     function activateTracking() {
+        if (
+            element.dataset.matomoEcommerce === 'true'
+            && element.dataset.matomoProductSku
+        ) {
+            const productPrice = element.dataset.matomoProductPrice;
+
+            window._paq.push([
+                'setEcommerceView',
+                element.dataset.matomoProductSku,
+                element.dataset.matomoProductName || false,
+                element.dataset.matomoProductCategory || false,
+                productPrice !== undefined && productPrice !== ''
+                    ? Number(productPrice)
+                    : false
+            ]);
+        }
+
         window._paq.push(['rememberConsentGiven']);
         window._paq.push(['trackPageView']);
     }
+
 
     function grantTracking() {
         if (consentGranted) {

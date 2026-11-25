@@ -1,5 +1,15 @@
+
+{% set matomoTracking = page.extensions.matomoTracking ?? null %}
+
 <div
         data-matomo-tracking
-        data-matomo-url="{{ page.extensions.matomoTracking.baseUrl|default('') }}"
-        data-matomo-site-id="{{ page.extensions.matomoTracking.siteId|default('') }}"
+        data-matomo-url="{{ matomoTracking.baseUrl|default('') }}"
+        data-matomo-site-id="{{ matomoTracking.siteId|default('') }}"
+        data-matomo-ecommerce="{{ matomoTracking.trackEcommerce|default(false) ? 'true' : 'false' }}"
+        {% if matomoTracking.product is defined %}
+            data-matomo-product-sku="{{ matomoTracking.product.sku }}"
+            data-matomo-product-name="{{ matomoTracking.product.name }}"
+            data-matomo-product-category="{{ matomoTracking.product.category }}"
+            data-matomo-product-price="{{ matomoTracking.product.price }}"
+        {% endif %}
 ></div>
