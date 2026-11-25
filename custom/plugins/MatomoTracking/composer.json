@@ -1,0 +1,22 @@
+{
+  "name": "swinde/matomo-tracking",
+  "description": "Matomo Tracking for Shopware 6.7",
+  "type": "shopware-platform-plugin",
+  "license": "proprietary",
+  "require": {
+    "shopware/core": "~6.7.0",
+    "shopware/storefront": "~6.7.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "MatomoTracking\\": "src/"
+    }
+  },
+  "extra": {
+    "shopware-plugin-class": "MatomoTracking\\MatomoTracking",
+    "label": {
+      "de-DE": "Matomo Tracking",
+      "en-GB": "Matomo Tracking"
+    }
+  }
+}
