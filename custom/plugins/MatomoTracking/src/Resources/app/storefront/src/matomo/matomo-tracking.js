@@ -116,6 +116,97 @@ function bootMatomo(element) {
         }
     }
 
+    function trackCartFromOffcanvas(response) {
+        // Ohne Einwilligung niemals Warenkorbdaten übertragen.
+        if (!consentGranted || !matomoReady || !window._paq) {
+            return;
+        }
+
+        if (typeof response !== 'string') {
+            return;
+        }
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(response, 'text/html');
+
+        const metadata = doc.querySelector(
+            '.hidden-line-items-information'
+        );
+
+        if (!metadata) {
+            return;
+        }
+
+        const items = [...metadata.querySelectorAll('.hidden-line-item')]
+            .map(item => ({
+                sku: item.dataset.sku,
+                name: item.dataset.name || '',
+                category: item.dataset.category1 || '',
+                price: Number(item.dataset.price),
+                quantity: Number(item.dataset.quantity)
+            }))
+            .filter(item =>
+                item.sku
+                && Number.isFinite(item.price)
+                && Number.isFinite(item.quantity)
+                && item.quantity > 0
+            );
+
+        // Alten Warenkorb im Matomo-Tracker zurücksetzen.
+        window._paq.push(['clearEcommerceCart']);
+
+        let cartTotal = 0;
+
+        items.forEach(item => {
+            window._paq.push([
+                'addEcommerceItem',
+                item.sku,
+                item.name,
+                item.category,
+                item.price,
+                item.quantity
+            ]);
+
+            cartTotal += item.price * item.quantity;
+        });
+
+        // Warenkorbwert ohne Versandkosten übermitteln.
+        window._paq.push([
+            'trackEcommerceCartUpdate',
+            cartTotal
+        ]);
+    }
+
+    // Offcanvas-Listener erst nach Initialisierung der Storefront registrieren.
+    function registerCartTracking() {
+        const offCanvasCart = window.PluginManager
+            ?.getPluginInstances('OffCanvasCart')?.[0];
+
+        if (!offCanvasCart?.$emitter) {
+            console.warn('Matomo: OffCanvasCart nicht gefunden.');
+            return;
+        }
+
+        offCanvasCart.$emitter.subscribe(
+            'offCanvasOpened',
+            event => {
+                console.log('Matomo: Offcanvas-Event empfangen');
+
+                trackCartFromOffcanvas(event.detail?.response);
+            }
+        );
+
+        console.log('Matomo: Offcanvas-Listener registriert');
+    }
+
+    if (document.readyState === 'complete') {
+        registerCartTracking();
+    } else {
+        window.addEventListener('load', registerCartTracking, {
+            once: true
+        });
+    }
+
     // Bereits vorhandene Zustimmung prüfen.
     if (readCookie(COOKIE_NAME) === '1') {
         grantTracking();
