@@ -6,10 +6,14 @@
         data-matomo-url="{{ matomoTracking.baseUrl|default('') }}"
         data-matomo-site-id="{{ matomoTracking.siteId|default('') }}"
         data-matomo-ecommerce="{{ matomoTracking.trackEcommerce|default(false) ? 'true' : 'false' }}"
+        data-matomo-anonymize-ip="{{ (matomoTracking.anonymizeIp ?? true) ? 'true' : 'false' }}"
         {% if matomoTracking.product is defined %}
             data-matomo-product-sku="{{ matomoTracking.product.sku }}"
             data-matomo-product-name="{{ matomoTracking.product.name }}"
             data-matomo-product-category="{{ matomoTracking.product.category }}"
             data-matomo-product-price="{{ matomoTracking.product.price }}"
+        {% endif %}
+        {% if matomoTracking.order is defined %}
+            data-matomo-order="{{ matomoTracking.order|json_encode|e('html_attr') }}"
         {% endif %}
 ></div>

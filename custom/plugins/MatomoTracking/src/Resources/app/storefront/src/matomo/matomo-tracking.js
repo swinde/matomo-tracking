@@ -41,6 +41,10 @@ function bootMatomo(element) {
             `${trackerBase}matomo.php`
         ]);
         window._paq.push(['setSiteId', String(siteId)]);
+        window._paq.push([
+            'setAnonymizeIp',
+            element.dataset.matomoAnonymizeIp === 'true'
+        ]);
         window._paq.push(['enableLinkTracking']);
 
         const script = document.createElement('script');
@@ -82,6 +86,8 @@ function bootMatomo(element) {
 
         window._paq.push(['rememberConsentGiven']);
         window._paq.push(['trackPageView']);
+
+        trackOrder();
     }
 
 
@@ -175,6 +181,80 @@ function bootMatomo(element) {
             'trackEcommerceCartUpdate',
             cartTotal
         ]);
+    }
+
+    function trackOrder() {
+        if (!consentGranted || !matomoReady || !window._paq) {
+            return;
+        }
+
+        const orderData = element.dataset.matomoOrder;
+
+        if (!orderData) {
+            return;
+        }
+
+        let order;
+
+        try {
+            order = JSON.parse(orderData);
+        } catch (error) {
+            console.error('Matomo: Bestelldaten konnten nicht gelesen werden.', error);
+            return;
+        }
+
+        const orderId = String(order.number || '');
+
+        if (!orderId) {
+            return;
+        }
+
+        // Doppelte Bestellübertragung verhindern.
+        const storageKey = `matomo-order-${siteId}-${orderId}`;
+
+        try {
+            if (localStorage.getItem(storageKey) === '1') {
+                return;
+            }
+        } catch (error) {
+            console.warn('Matomo: LocalStorage ist nicht verfügbar.');
+        }
+
+        const items = Array.isArray(order.items) ? order.items : [];
+
+        window._paq.push(['clearEcommerceCart']);
+
+        items.forEach(item => {
+            if (!item.sku) {
+                return;
+            }
+
+            window._paq.push([
+                'addEcommerceItem',
+                item.sku,
+                item.name || '',
+                item.category || false,
+                Number(item.price),
+                Number(item.quantity)
+            ]);
+        });
+
+        window._paq.push([
+            'trackEcommerceOrder',
+            orderId,
+            Number(order.total),
+            Number(order.subtotal),
+            Number(order.tax),
+            Number(order.shipping)
+        ]);
+
+        try {
+            localStorage.setItem(storageKey, '1');
+        } catch (error) {
+            console.warn('Matomo: Bestellstatus konnte nicht gespeichert werden.');
+        }
+
+        console.log('Matomo: Bestellung übertragen:', orderId);
     }
 
     // Offcanvas-Listener erst nach Initialisierung der Storefront registrieren.

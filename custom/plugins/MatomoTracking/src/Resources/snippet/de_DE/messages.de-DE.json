@@ -1,0 +1,9 @@
+{
+  "matomo": {
+    "cookie": {
+      "groupDescription": "Diese Cookies helfen uns, die Nutzung unseres Shops anonymisiert zu analysieren und unser Angebot zu verbessern.",
+      "name": "Matomo Webanalyse",
+      "description": "Dieses Cookie ermöglicht die datenschutzfreundliche Erfassung und Analyse Ihres Besuchs in unserem Shop."
+    }
+  }
+}
