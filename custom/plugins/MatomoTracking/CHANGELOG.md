@@ -1,51 +1,46 @@
+
 # Changelog
 
-Alle wesentlichen Änderungen an diesem Projekt werden in dieser Datei
-dokumentiert.
+Alle wesentlichen Änderungen an diesem Projekt werden in dieser Datei dokumentiert.
 
-Das Format orientiert sich an [Keep a
-Changelog](https://keepachangelog.com/de/1.1.0/). Solange keine
-veröffentlichte Plugin-Version festgelegt ist, werden Änderungen unter
-`Unreleased` gesammelt.
+Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/).
 
-## \[Unreleased\]
+## [1.0.1] - 2026-11-26
 
 ### Added
 
--   Einbindung einer selbst gehosteten Matomo-Instanz über `matomo.js`
-    und `matomo.php`.
--   Konfigurationsmöglichkeiten für Aktivierung, Matomo-Basis-URL und
-    Site-ID.
--   Shopware-Cookie-Einwilligung für Matomo über das Cookie
-    `matomo-tracking`.
--   Reaktion auf Zustimmung und Widerruf ohne erforderlichen
-    Seitenreload.
--   Erfassung von Produktansichten mit Matomo `setEcommerceView`.
--   Warenkorbtracking über das Shopware-Event `offCanvasOpened`.
--   Übermittlung der Warenkorbpositionen mit `addEcommerceItem`.
--   Übermittlung des Warenkorbwerts mit `trackEcommerceCartUpdate`.
+- Deutsche und englische Sprachsnippets für die Matomo-Cookie-Gruppe.
+- Konfigurationsoption zur Anonymisierung von IP-Adressen.
+- Übergabe der IP-Anonymisierungseinstellung an Matomo.
+- Bestelltracking mit Matomo `trackEcommerceOrder`.
+- Übermittlung von Bestellnummer, Umsatz, Versandkosten, Steuern und Bestellpositionen.
+- Schutz vor doppelter Bestellübertragung mittels LocalStorage.
+- Erfassung von E-Commerce-Bestellungen und Produkten.
 
 ### Changed
 
--   Warenkorbpositionen werden bei jeder Warenkorbaktualisierung
-    vollständig neu an Matomo übermittelt.
--   Der Warenkorbwert wird aus Einzelpreis und Menge berechnet;
-    Versandkosten werden nicht eingerechnet.
+- IP-Anonymisierung ist standardmäßig aktiviert.
+- Warenkorbpositionen werden bei jeder Warenkorbaktualisierung vollständig neu an Matomo übermittelt.
+- Der Warenkorbwert wird aus Einzelpreis und Menge berechnet; Versandkosten werden nicht eingerechnet.
 
 ### Tested
 
--   Produktansicht wird nach erteilter Einwilligung erfasst.
--   Hinzufügen eines Artikels zum Warenkorb.
--   Gemeinsame Übermittlung mehrerer Warenkorbpositionen.
--   Aktualisierung von Artikelmengen.
--   Entfernung von Artikeln aus dem Warenkorb.
--   Keine weiteren Matomo-Trackingrequests nach Widerruf der
-    Einwilligung.
+- Matomo wird erst nach erteilter Cookie-Einwilligung geladen.
+- Zustimmung und Widerruf der Cookie-Einwilligung.
+- Produktansichten mit `setEcommerceView`.
+- Hinzufügen, Ändern und Entfernen von Warenkorbpositionen.
+- Übermittlung mehrerer Warenkorbpositionen.
+- Übermittlung von Bestellungen einschließlich Bestellpositionen.
+- Schutz vor doppelter Bestellübertragung.
+- IP-Anonymisierung: Übergabe der aktivierten und deaktivierten Einstellung an JavaScript.
+- Erkennung von UTM-Kampagnen in Matomo.
+- Unterschiedliche Besucherprofile in verschiedenen Browsern.
 
-### Not yet implemented
+### Known Limitations
 
--   Bestelltracking mit `trackEcommerceOrder`.
--   Übermittlung von Bestellnummer, Umsatz, Versandkosten, Steuern und
-    Bestellpositionen.
--   Schutz vor doppelter Erfassung einer Bestellung.
--   Abschließende Prüfung der Kategorieübermittlung im Warenkorb.
+- Die Kategorieübermittlung bei Warenkorb- und Bestellpositionen sollte weiter geprüft werden.
+- Die abschließenden Tests im Live-Shop stehen noch aus.
+
+---
+
+## [Unreleased]
